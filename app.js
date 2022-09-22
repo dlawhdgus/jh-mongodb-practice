@@ -5,10 +5,6 @@ const port = 3000
 const mongodb = require('mongodb')
 const MongoClient = require('mongodb').MongoClient
 
-app.listen(port, ()=> {
-  console.log('server on!!')
-})
-
 MongoClient.connect(config.MONGODB_CONNECTION_STRING, {
   useUnifiedTopology: 1
 } , (err,database) => {
@@ -37,7 +33,6 @@ MongoClient.connect(config.MONGODB_CONNECTION_STRING, {
       if(!(filter.gender === 1 || filter.gender === 0)){
         res.send('0(남자) 또는 1(여자)을 선택해주세요')
       }
-
     } else {
       db_collection.insertOne(filter,(err,result) => {
         if(err) throw err
@@ -102,12 +97,8 @@ MongoClient.connect(config.MONGODB_CONNECTION_STRING, {
     const { ch_name, ch_age, ch_school, ch_startDate, ch_address, ch_gender, ch_endDate } = req.query
     const filter_bool = {}
     const condition = {}
-    if(name){
-      filter_bool.name = name
-    }
-    if(age){
-      filter_bool.age = Number(age)
-    }
+    if(name){filter_bool.name = name}
+    if(age){filter_bool.age = Number(age)}
     if(school){
       filter_bool.school = school
     }
@@ -144,7 +135,6 @@ MongoClient.connect(config.MONGODB_CONNECTION_STRING, {
     if(ch_endDate){
       condition.endDate = Date(ch_endDate)
     }
-    console.log(filter_bool,condition)
     db_collection.updateOne(filter_bool,{$set : condition},(err,result) => {
       if(err) throw err
       if(result.matchedCount === 0){
@@ -207,3 +197,7 @@ function isEmptyArr(arr)  {
   if(Array.isArray(arr) && arr.length === 0) return true;
   else return false;
 }
+
+app.listen(port, ()=> {
+  console.log('server on!!')
+})
