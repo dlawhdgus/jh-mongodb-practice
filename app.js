@@ -56,7 +56,6 @@ MongoClient.connect(config.MONGODB_CONNECTION_STRING, {
       if(!(filter.gender === 1 || filter.gender === 0)){
         res.send('0(남자) 또는 1(여자)을 선택해주세요')
       }
-
     } else {
       db_collection.insertOne(filter,(err,result) => {
         if(err) throw err
@@ -137,6 +136,8 @@ MongoClient.connect(config.MONGODB_CONNECTION_STRING, {
     if(age){
       filter_bool.age = Number(age)
     }
+    if(name){filter_bool.name = name}
+    if(age){filter_bool.age = Number(age)}
     if(school){
       filter_bool.school = school
     }
@@ -240,3 +241,7 @@ function isEmptyArr(arr)  {
   if(Array.isArray(arr) && arr.length === 0) return true;
   else return false;
 }
+
+app.listen(port, ()=> {
+  console.log('server on!!')
+})
