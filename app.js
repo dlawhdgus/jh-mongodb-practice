@@ -5,6 +5,9 @@ const port = 3000
 const mongodb = require('mongodb')
 const MongoClient = require('mongodb').MongoClient
 
+/**
+ * @todo app.listen 부분은 맨 밑으로 들어가도 무방함
+ */
 app.listen(port, ()=> {
   console.log('server on!!')
 })
@@ -21,10 +24,17 @@ MongoClient.connect(config.MONGODB_CONNECTION_STRING, {
     res.send('sucess loading')
   })
 
+  /**
+   * @todo POST 요청에서 데이터를 받을 땐 body로 받아야 함!
+   */
   app.post('/createuser', (req,res) => {
     const { name, age, school, startDate, address, gender, endDate } = req.query
     const filter_bool = {}
     const filter = {}
+
+    /**
+     * @todo if 문으로 고치는게 가독성이 좋음!
+     */
     filter_bool.name = name ? filter.name = name : 0
     filter_bool.age = age ? filter.age = Number(age) : 0
     filter_bool.school = school ? filter.school = school : 0
@@ -32,7 +42,16 @@ MongoClient.connect(config.MONGODB_CONNECTION_STRING, {
     filter_bool.address = address ? filter.address = address : 0
     filter_bool.gender = gender ? filter.gender = Number(gender) : 0
     filter_bool.endDate = endDate ? filter.endDate = Date(endDate) : 0
+
+    /**
+     * @todo 코드 제출시에는 로그 찍는 코드는 지워줄 것
+     */
     console.log(filter.gender)
+
+    /**
+     * @todo 해당 부분은 filter에 넣기 전에 선행 되어야 함! (불필요한 연산을 줄이기 위해)
+     *       nullcheck는 모든 필드에서 수행되어야 함!
+     */
     if(filter_bool.gender) {
       if(!(filter.gender === 1 || filter.gender === 0)){
         res.send('0(남자) 또는 1(여자)을 선택해주세요')
@@ -62,6 +81,10 @@ MongoClient.connect(config.MONGODB_CONNECTION_STRING, {
     filter_bool.address = address ? filter.address = address : 0
     filter_bool.gender = gender ? filter.gender = Number(gender) : 0
     filter_bool.endDate = endDate ? filter.endDate = Date(endDate) : 0
+
+    /**
+     * @todo 사용하지 않는 주석은 삭제 필요
+     */
     /*
     const projection_bool = {}
     if(filter_bool.name){
@@ -96,12 +119,18 @@ MongoClient.connect(config.MONGODB_CONNECTION_STRING, {
     })
   })
 
-  
+  /**
+   * @todo update시에는 _id값으로 검색해야 함 (자동으로 인덱싱이 되어 있어 검색속도가 가장 빠름)
+   */
   app.post('/updateuser', (req,res) => {
     const { name, age, school, startDate, address, gender, endDate } = req.query
     const { ch_name, ch_age, ch_school, ch_startDate, ch_address, ch_gender, ch_endDate } = req.query
     const filter_bool = {}
     const condition = {}
+
+    /**
+     * @todo if문 내부에 한줄만 있을 경우 {} 생략 가능!
+     */
     if(name){
       filter_bool.name = name
     }
@@ -144,6 +173,10 @@ MongoClient.connect(config.MONGODB_CONNECTION_STRING, {
     if(ch_endDate){
       condition.endDate = Date(ch_endDate)
     }
+
+    /**
+     * @todo 개발 로그 삭제 요망
+     */
     console.log(filter_bool,condition)
     db_collection.updateOne(filter_bool,{$set : condition},(err,result) => {
       if(err) throw err
