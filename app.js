@@ -19,6 +19,7 @@ MongoClient.connect(config.MONGODB_CONNECTION_STRING, {
 
   app.post('/createuser', (req,res) => {
     const { name, age, school, startDate, address, gender, endDate } = req.body
+    console.log(name)
     const filter = {}
 
     if(name){filter.name = name}
